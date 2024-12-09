@@ -4,8 +4,10 @@ from tkinter import (
     Tk, Label, Button, filedialog, StringVar, ttk, Canvas, PhotoImage, colorchooser, messagebox,Frame
 )
 from PIL import Image, ImageDraw, ImageFont, ImageTk
-
+#The application is part of Maruti AI
+#yOU CAN FIND THE CORDINATES OF DESIRED LOCATION FORM :: https://www.image-map.net/
 #we can create a function main and then import that in the other script
+
 class FlyerGeneratorApp:
     def __init__(self, root):
         self.root = root
@@ -20,14 +22,14 @@ class FlyerGeneratorApp:
         self.text_color = StringVar(value="#000000")
         self.selected_font = StringVar()
         self.selected_graphic = StringVar()
-        self.name_coords = StringVar(value="164,1437,817,1528")  # Default coordinates for name
-        self.phone_coords = StringVar(value="161,1509,814,1597") # Default coordinates
+        self.name_coords = StringVar(value="164,1437,817,1528")  # setting default coordinates names
+        self.phone_coords = StringVar(value="161,1509,814,1597") # default coordinates phone number
 
-        # Fonts and graphics options
-        self.font_folder = r"font"  # Update with your fonts directory
-        self.graphics_folder = r"graphics"  # Update with your graphics directory
+        # fonts and graphics options
+        self.font_folder = r"font"  #font directory
+        self.graphics_folder = r"graphics"  #  graphics directory
 
-        # Fonts and Graphics options
+
         self.font_options = [os.path.join(self.font_folder, f) for f in os.listdir(self.font_folder) if
                              f.endswith('.ttf')]
         self.graphic_options = [os.path.join(self.graphics_folder, f) for f in os.listdir(self.graphics_folder) if
@@ -138,7 +140,7 @@ class FlyerGeneratorApp:
             return
 
         try:
-            # Open the background image and convert it to RGBA (for transparency handling)
+            # opening bg
             bg_image = Image.open(self.bg_image_path.get()).convert("RGBA")
 
             # Create a drawing object
@@ -152,35 +154,35 @@ class FlyerGeneratorApp:
             name = "Aditya"
             phone = "343482342"
 
-            # Parse coordinates for name and phone text boxes
+            # parse coordinates for name and phone text boxes
             name_box = list(map(int, self.name_coords.get().split(",")))
             phone_box = list(map(int, self.phone_coords.get().split(",")))
 
-            # Calculate the available space for text (width and height)
+            # calculating the available space for text (width and height)
             max_text_width = name_box[1] - name_box[0]
             max_text_height = name_box[3] - name_box[1]
 
-            # Dynamically adjust font size based on space available
+            # Dynamically adjustment of font size based on area
             font_size = min(max_text_width, max_text_height) // 2
             font = ImageFont.truetype(self.selected_font.get(), font_size)
 
-            # Calculate bounding boxes for name and phone text
+            # calculating bounding boxes for name and phone text
             name_text_box = draw.textbbox((0, 0), name, font=font)
             phone_text_box = draw.textbbox((0, 0), phone, font=font)
 
-            # Calculate center coordinates for name
+            # calculating center coordinates for name
             name_center_x = (name_box[0] + name_box[2] - name_text_box[2]) // 2
             name_center_y = (name_box[1] + name_box[3] - name_text_box[3]) // 2
 
-            # Calculate center coordinates for phone
+            # calculating center coordinates for phone
             phone_center_x = (phone_box[0] + phone_box[2] - phone_text_box[2]) // 2
-            phone_center_y = name_center_y + name_text_box[3] + 10  # Space between name and phone number
+            phone_center_y = name_center_y + name_text_box[3] + 10  #  This give space b/w name and phone number
 
-            # Draw the name and phone number on the background image
+            # phone number and name printing on image
             draw.text((name_center_x, name_center_y), name, fill=text_color, font=font)
             draw.text((phone_center_x, phone_center_y), phone, fill=text_color, font=font)
 
-            # If a graphic is selected, add it to the image
+            # graphics selection logics
             if self.selected_graphic.get():
                 phone_icon = Image.open(self.selected_graphic.get()).convert("RGBA")
                 phone_icon_resized = phone_icon.resize((20, 20))  # Resize the icon as needed
@@ -213,12 +215,12 @@ class FlyerGeneratorApp:
 
 
 
-    # Function to sanitize names or symbols in the CSV data
+    # function to sanitize names or symbols in the CSV data
 
     def generate_flyers(self):
         import re
         def sanitize_input(input_string):
-            # Define a pattern to remove unallowed characters (keeping only alphanumeric and spaces)
+            # pattern to remove unallowed characters (keeping only alphanumeric and spaces)
             sanitized_string = re.sub(r'[^a-zA-Z0-9\s]', '', input_string)
             return sanitized_string
 
@@ -233,12 +235,12 @@ class FlyerGeneratorApp:
 
             with open(self.csv_path.get(), mode="r", encoding="utf-8") as csvfile:
                 reader = csv.reader(csvfile)
-                next(reader)  # Skip header row
+                next(reader)  # Skiping header row
 
                 for row in reader:
                     name, phone = row[1], row[2]
 
-                    # Sanitize the name and phone before using them
+
                     name = sanitize_input(name)
                     phone = sanitize_input(phone)
 
@@ -248,39 +250,38 @@ class FlyerGeneratorApp:
                     name_box = list(map(int, self.name_coords.get().split(",")))
                     phone_box = list(map(int, self.phone_coords.get().split(",")))
 
-                    # Calculate the available space for text (width and height)
+
                     max_text_width = name_box[1] - name_box[0]
                     max_text_height = name_box[3] - name_box[1]
 
-                    # Dynamically adjust font size based on space available
                     font_size = min(max_text_width, max_text_height) // 2
                     font = ImageFont.truetype(self.selected_font.get(), font_size)
 
-                    # Calculate bounding boxes for name and phone text
+
                     name_text_box = draw.textbbox((0, 0), name, font=font)
                     phone_text_box = draw.textbbox((0, 0), phone, font=font)
 
-                    # Calculate center coordinates for name
+
                     name_center_x = (name_box[0] + name_box[2] - name_text_box[2]) // 2
                     name_center_y = (name_box[1] + name_box[3] - name_text_box[3]) // 2
 
-                    # Calculate center coordinates for phone
-                    phone_center_x = (phone_box[0] + phone_box[2] - phone_text_box[2]) // 2
-                    phone_center_y = name_center_y + name_text_box[3] + 10  # Space between name and phone number
 
-                    # Draw the name and phone number on the background image
+                    phone_center_x = (phone_box[0] + phone_box[2] - phone_text_box[2]) // 2
+                    phone_center_y = name_center_y + name_text_box[3] + 10
+
+
                     draw.text((name_center_x, name_center_y), name, fill=self.text_color.get(), font=font)
                     draw.text((phone_center_x, phone_center_y), phone, fill=self.text_color.get(), font=font)
 
-                    # If a graphic is selected, add it to the image
+
                     if self.selected_graphic.get():
                         graphic = Image.open(self.selected_graphic.get()).convert("RGBA")
 
-                        # Resize the graphic to match the phone font size (height of the font)
+                        #graphics resizing
                         graphic_resized = graphic.resize((font_size, font_size))
                         icon_resized = graphic_resized.resize((font_size, font_size))
 
-                        # Position the graphic just to the left of the phone number (2 units away)
+                        # positioning the graphic just to the left of the phone number (2 units away)
                         icon_x = phone_center_x - icon_resized.width - 5 # 5 units of space between graphic and phone number
                         icon_y = phone_center_y - (
                                     icon_resized.height - font_size) // 2  # Align vertically with phone number
@@ -292,7 +293,7 @@ class FlyerGeneratorApp:
 
                         flyer.paste(graphic_resized, (icon_x, icon_y), graphic_resized)
 
-                    # Save the flyer to the output directory
+                    # saving the flyer to the output directory
                     flyer.save(os.path.join(output_dir, f"{name}_flyer.png"))
 
                 messagebox.showinfo("Success", "Flyers generated successfully!")
@@ -301,7 +302,7 @@ class FlyerGeneratorApp:
             messagebox.showerror("Error", f"Flyer generation failed: {e}")
 
 
-# Run the app
+#run block for the app
 root = Tk()
 app = FlyerGeneratorApp(root)
 root.mainloop()
